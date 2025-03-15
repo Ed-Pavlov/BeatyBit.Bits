@@ -1,9 +1,6 @@
 mode: ContinuousDeployment
-versioning-mode: SemanticVersion
-major: 0
-minor: 0
-patch: 1
 increment: Patch
+next-version: 0.0.1
 update-build-number: true
 
 branches:
