@@ -1,4 +1,8 @@
 mode: ContinuousDeployment
+versioning-mode: SemanticVersion
+major: 0
+minor: 0
+patch: 1
 increment: Patch
 update-build-number: true
 
@@ -7,3 +11,4 @@ branches:
     regex: ^main$
     increment: Patch
     is-mainline: true
+    tag: ""
