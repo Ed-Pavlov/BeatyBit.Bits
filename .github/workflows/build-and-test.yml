@@ -14,6 +14,7 @@ env:
   artifacts-dir: artifacts
   nugets-dir:    artifacts/nupkgs
   pdb-dir:       artifacts/pdb
+  finalSemVer:   ""
 
 jobs:
   build:
@@ -36,13 +37,14 @@ jobs:
         uses: gittools/actions/gitversion/setup@v3.1.11
         with:
           versionSpec: '6.0.x'
-          useConfigFile: true
-          arguments: '/showConfig'
 
       -
         name: Use GitVersion
         id:   gitversion # step id used as reference for output values
-        uses: gittools/actions/gitversion/execute@v1.1.1
+        uses: gittools/actions/gitversion/execute@v3.1.11
+
+      - name: Set finalSemVer value
+        run: echo "finalSemVer=${{ steps.gitversion.outputs.major }}.${{ steps.gitversion.outputs.minor }}.${{ steps.gitversion.outputs.commitsSinceVersionSource }}" >> $GITHUB_ENV
 
       # Build
       -
@@ -50,9 +52,9 @@ jobs:
         run:  >
           dotnet build
           -c ${{env.configuration}}
-          -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
-          -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
-          -p:InformationalVersion=${{ steps.gitversion.outputs.semVer }}
+          -p:AssemblyVersion=${{ env.finalSemVer }}
+          -p:FileVersion=${{ env.finalSemVer }}
+          -p:InformationalVersion=${{ env.finalSemVer }}
 
       # Run tests
       -
@@ -62,7 +64,7 @@ jobs:
       # Create and place nuget packages into env.nugets-dir directory
       -
         name: Pack
-        run: dotnet pack --no-build -o:${{ env.nugets-dir }} -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }}
+        run: dotnet pack --no-build -o:${{ env.nugets-dir }} -p:PackageVersion=${{ env.finalSemVer }}
 
       -
         name: Store Version
@@ -71,9 +73,9 @@ jobs:
           name: version.json
           json: |
             {
-            "assembly-version": "${{ steps.gitversion.outputs.assemblySemVer }}",
-            "assembly-file-version": "${{ steps.gitversion.outputs.assemblySemFileVer }}",
-            "nuget-version": "${{ steps.gitversion.outputs.nuGetVersionV2 }}"
+            "assembly-version": "${{ env.finalSemVer }}",
+            "assembly-file-version": "${{ env.finalSemVer }}",
+            "nuget-version": "${{ env.finalSemVer }}"
             }
           dir:  ${{ env.artifacts-dir }}
 

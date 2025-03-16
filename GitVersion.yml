@@ -1,7 +1,6 @@
 mode: ContinuousDelivery
 increment: Patch
 update-build-number: True
-next-version: 0.0.1
 
 branches:
   main:
