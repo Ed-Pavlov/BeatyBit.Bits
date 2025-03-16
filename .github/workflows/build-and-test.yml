@@ -2,20 +2,6 @@ name: Build & Test
 
 on:
   workflow_dispatch:
-#    inputs:
-#      prerelease_tag:
-#        description: 'Prerelease tag'
-#        required: false
-#        default: ''
-#      publish_artifacts:
-#        description: 'Publish artifacts'
-#        required: true
-#        default: 'false'
-#        type: choice
-#        options:
-#          - 'true'
-#          - 'false'
-
   push:
     branches:
       - main
@@ -49,7 +35,7 @@ jobs:
         name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v1.1.1
         with:
-          versionSpec: '5.x'
+          versionSpec: '6.x'
           preferLatestVersion: true
 
       -
@@ -93,7 +79,7 @@ jobs:
       -
         name: Store PDB
         run: |
-          robocopy src\Armature\bin\Release\netstandard2.1\ ${{ env.pdb-dir }} *.pdb
+          robocopy .out\bin\netstandard2.0\ ${{ env.pdb-dir }} *.pdb
           if ($lastexitcode -lt 8) { $global:lastexitcode = 0 }
 
       -
