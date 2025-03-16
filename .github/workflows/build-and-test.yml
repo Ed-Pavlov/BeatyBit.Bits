@@ -45,6 +45,7 @@ jobs:
 
       - name: Set finalSemVer value
         run: echo "finalSemVer=${{ steps.gitversion.outputs.major }}.${{ steps.gitversion.outputs.minor }}.${{ steps.gitversion.outputs.commitsSinceVersionSource }}" >> $GITHUB_ENV
+        shell: bash
 
       # Build
       -
