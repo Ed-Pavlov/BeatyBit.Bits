@@ -30,7 +30,12 @@ jobs:
 
     -
       name: Publish Nugets to nuget.org
-      run:  dotnet nuget push "${{ env.nugets-dir }}/*.nupkg" -k ${{ secrets.nuget_api_key }} -s https://api.nuget.org/v3/index.json
+      run:  >
+        Get-ChildItem nupkgs\*.nupkg |
+        ForEach-Object {
+          dotnet nuget push $_.FullName -k ${{ secrets.nuget_api_key }} -s https://api.nuget.org/v3/index.json
+        }
+      shell: pwsh
 
     -
       name: Make Github Release
