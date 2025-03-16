@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace BeatyBit.Bits;
 
-
 /// <summary>
 /// A memory-efficient list implementation that stores first four elements inline and falls back to <see cref="List{T}"/> for additional elements.
 /// </summary>
@@ -20,6 +19,7 @@ public class LeanList4<T> : IList<T>
 
   public LeanList4(int capacity = 1)
   {
+    if(capacity <= 0) throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity must be greater than zero.");
     if(capacity > 4)
       _list = new List<T>(capacity - 4);
   }
@@ -46,14 +46,19 @@ public class LeanList4<T> : IList<T>
     if(Count < 4)
       foreach(var item in items)
       {
-        if(Count > 4)
+        if(Count >= 4)
           break;
 
         Add(item);
         toSkip++;
       }
 
-    List.AddRange(items.Skip(toSkip));
+    if(toSkip < items.Count)
+    {
+      var lc = List.Count;
+      List.AddRange(items.Skip(toSkip));
+      Count += List.Count - lc;
+    }
   }
 
   /// <inheritdoc cref="IList{T}.this"/>
@@ -61,13 +66,13 @@ public class LeanList4<T> : IList<T>
   {
     get
     {
-      if(index < 0 || Count < index) throw new ArgumentOutOfRangeException(nameof(index));
+      if(index < 0 || index >= Count) throw new ArgumentOutOfRangeException(nameof(index));
       return GetItem(index);
     }
 
     set
     {
-      if(index < 0 || Count < index) throw new ArgumentOutOfRangeException(nameof(index));
+      if(index < 0 || index >= Count) throw new ArgumentOutOfRangeException(nameof(index));
       SetItem(index)(value);
     }
   }
@@ -102,14 +107,17 @@ public class LeanList4<T> : IList<T>
 
   IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-  public bool IsReadOnly                          => false;
+  public bool IsReadOnly => false;
 
   /// <summary> NotSupported </summary>
-  public void CopyTo(T[]   array, int arrayIndex) => throw new NotSupportedException();
+  public void CopyTo(T[] array, int arrayIndex) => throw new NotSupportedException();
+
   /// <summary> NotSupported </summary>
-  public bool Remove(T     item)          => throw new NotSupportedException();
+  public bool Remove(T item) => throw new NotSupportedException();
+
   /// <summary> NotSupported </summary>
-  public void Insert(int   index, T item) => throw new NotSupportedException();
+  public void Insert(int index, T item) => throw new NotSupportedException();
+
   /// <summary> NotSupported </summary>
   public void RemoveAt(int index) => throw new NotSupportedException();
 
@@ -122,7 +130,7 @@ public class LeanList4<T> : IList<T>
       1 => value => _1 = value,
       2 => value => _2 = value,
       3 => value => _3 = value,
-      _ => value => _list![index - 4] = value
+      _ => value => _list![index - 4] = value,
     };
 
   private T GetItem(int index)
@@ -132,6 +140,6 @@ public class LeanList4<T> : IList<T>
       1 => _1!,
       2 => _2!,
       3 => _3!,
-      _ => _list![index - 4]
+      _ => _list![index - 4],
     };
 }

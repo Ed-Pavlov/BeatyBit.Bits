@@ -32,13 +32,13 @@ public readonly struct Maybe<T>
   /// Gets the value contained in this Maybe instance.
   /// </summary>
   /// <exception cref="InvalidOperationException">Thrown when attempting to access the Value of an empty Maybe instance.</exception>
-  public T Value => HasValue ? field : throw new InvalidOperationException("No value");
+  public T Value => HasValue ? field : throw new InvalidOperationException("Has no value");
 }
 
 /// <summary>
 /// Provides extension methods for working with Maybe instances.
 /// </summary>
-internal static class Maybe
+public static class Maybe
 {
   /// <summary>
   /// Converts a value to a Maybe instance.

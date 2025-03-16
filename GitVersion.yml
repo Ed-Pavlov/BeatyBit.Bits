@@ -1,11 +1,9 @@
-mode: ContinuousDeployment
+mode: ContinuousDelivery
 increment: Patch
+update-build-number: True
 next-version: 0.0.1
-update-build-number: true
 
 branches:
   main:
-    regex: ^main$
-    increment: Patch
-    is-mainline: true
-    tag: ""
+    regex: ^(main)$
+    label: ''

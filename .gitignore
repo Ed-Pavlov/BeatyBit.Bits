@@ -6,6 +6,8 @@ private
 
 # Compiling result files
 .out/
+[Bb]in/
+[Oo]bj/
 
 # Visual Studion and ReSharper files
 _ReSharper.Caches/

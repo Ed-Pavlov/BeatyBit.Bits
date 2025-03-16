@@ -1,5 +1,5 @@
 # BeatyBit.Bits
-___
+
 <p align="center">
   <img src="/.build/icon.png" width="128" height="128">
 </p>

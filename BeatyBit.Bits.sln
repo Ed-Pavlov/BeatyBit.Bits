@@ -12,6 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".root", ".root", "{319766B7
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeatyBit.Bits.Test", "test\BeatyBit.Bits.Test\BeatyBit.Bits.Test.csproj", "{33BDD8B8-4822-478E-BD89-07E432A7530D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E141E2D4-3DED-4013-B5E9-89F3F74983AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,8 +26,13 @@ Global
 		{3A3D54D5-941D-4307-A31F-6F177E53F170}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A3D54D5-941D-4307-A31F-6F177E53F170}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A3D54D5-941D-4307-A31F-6F177E53F170}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33BDD8B8-4822-478E-BD89-07E432A7530D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33BDD8B8-4822-478E-BD89-07E432A7530D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33BDD8B8-4822-478E-BD89-07E432A7530D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33BDD8B8-4822-478E-BD89-07E432A7530D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3A3D54D5-941D-4307-A31F-6F177E53F170} = {A3172B24-1B65-4B5A-8869-1C1211CB9F9C}
+		{33BDD8B8-4822-478E-BD89-07E432A7530D} = {E141E2D4-3DED-4013-B5E9-89F3F74983AD}
 	EndGlobalSection
 EndGlobal
