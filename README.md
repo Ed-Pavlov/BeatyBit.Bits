@@ -1,8 +1,11 @@
 # BeatyBit.Bits
 
-<p align="right">
+<p align="center">
   <img src="/.build/icon.png" width="128" height="128">
 </p>
+
+[![Build & Test](https://github.com/Ed-Pavlov/BeatyBit.Bits/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/Ed-Pavlov/Armature/actions/workflows/build-and-test.yml)
+[![Nuget](https://img.shields.io/nuget/dt/BeatyBit.Bits)](https://www.nuget.org/packages/Armature/)
 
 ## Powered by
 <p align="right">
