@@ -43,19 +43,15 @@ jobs:
         id:   gitversion # step id used as reference for output values
         uses: gittools/actions/gitversion/execute@v3.1.11
 
-      - name: Set finalSemVer value
-        run: echo "finalSemVer=${{ steps.gitversion.outputs.major }}.${{ steps.gitversion.outputs.minor }}.${{ steps.gitversion.outputs.commitsSinceVersionSource }}" >> $GITHUB_ENV
-        shell: bash
-
       # Build
       -
         name: Build
         run:  >
           dotnet build
           -c ${{env.configuration}}
-          -p:AssemblyVersion=${{ env.finalSemVer }}
-          -p:FileVersion=${{ env.finalSemVer }}
-          -p:InformationalVersion=${{ env.finalSemVer }}
+          -p:AssemblyVersion=${{ steps.gitversion.outputs.fullSemVer }}
+          -p:FileVersion=${{ steps.gitversion.outputs.fullSemVer }}
+          -p:InformationalVersion=${{ steps.gitversion.outputs.fullSemVer }}
 
       # Run tests
       -
@@ -65,7 +61,7 @@ jobs:
       # Create and place nuget packages into env.nugets-dir directory
       -
         name: Pack
-        run: dotnet pack --no-build -o:${{ env.nugets-dir }} -p:PackageVersion=${{ env.finalSemVer }}
+        run: dotnet pack --no-build -o:${{ env.nugets-dir }} -p:PackageVersion=${{ steps.gitversion.outputs.fullSemVer }}
 
       -
         name: Store Version
@@ -74,9 +70,9 @@ jobs:
           name: version.json
           json: |
             {
-            "assembly-version": "${{ env.finalSemVer }}",
-            "assembly-file-version": "${{ env.finalSemVer }}",
-            "nuget-version": "${{ env.finalSemVer }}"
+            "assembly-version": "${{ steps.gitversion.outputs.fullSemVer }}",
+            "assembly-file-version": "${{ steps.gitversion.outputs.fullSemVer }}",
+            "nuget-version": "${{ steps.gitversion.outputs.fullSemVer }}"
             }
           dir:  ${{ env.artifacts-dir }}
 

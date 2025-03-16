@@ -1,7 +1,7 @@
 # BeatyBit.Bits
 
 <p align="center">
-  <img src="/.build/icon.png" width="128" height="128">
+  <img src="/.build/icon.png" width="86" height="86">
 </p>
 
 [![Build & Test](https://github.com/Ed-Pavlov/BeatyBit.Bits/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/Ed-Pavlov/Armature/actions/workflows/build-and-test.yml)
