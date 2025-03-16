@@ -61,5 +61,8 @@
     <Compile Include="..\..\.build\AssemblyInfo.cs">
       <Link>.build\AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="..\..\.build\JetBrains.Annotations.cs">
+      <Link>.build\JetBrains.Annotations.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

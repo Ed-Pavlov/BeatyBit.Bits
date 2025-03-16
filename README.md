@@ -1,10 +1,15 @@
 # BeatyBit.Bits
 
-<p align="center">
+<p align="right">
   <img src="/.build/icon.png" width="128" height="128">
 </p>
 
-Useful bits for reuse in other projects
+## Powered by
+<p align="right">
+  <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/Rider.png" width="185" height="64">
+</p>
+
+**Useful bits for reuse in other projects**
 * Maybe monad
 * A couple of extensions for working with Dictionary.
   * GetOrCreateValue—encapsulation of often necessary action.

@@ -1,11 +1,15 @@
-﻿namespace BeatyBit.Bits;
+﻿using JetBrains.Annotations;
+
+namespace BeatyBit.Bits;
 
 /// <summary>
 /// Is used as generic parameter to specify "no generic parameter"
 /// </summary>
 internal struct Unit
 {
-  private static Unit? _default; // create on demand
-
-  public Unit Default => _default ??= new Unit();
+  /// <summary>
+  /// The default (and only) value of <see cref="Unit"/>
+  /// </summary>
+  [PublicAPI]
+  public static readonly Unit Default = new Unit();
 }
