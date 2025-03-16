@@ -19,8 +19,8 @@
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <BaseIntermediateOutputPath>$(SolutionDir)\.out\obj\</BaseIntermediateOutputPath>
     <OutputPath>$(SolutionDir)\.out\bin\</OutputPath>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
-
 
   <PropertyGroup Label="signing">
     <SignAssembly>true</SignAssembly>

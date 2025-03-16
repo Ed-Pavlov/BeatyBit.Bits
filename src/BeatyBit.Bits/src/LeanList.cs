@@ -17,6 +17,7 @@ public class LeanList4<T> : IList<T>
   private T?       _3;
   private List<T>? _list;
 
+  /// <inheritdoc cref="LeanList4{T}"/>
   public LeanList4(int capacity = 1)
   {
     if(capacity <= 0) throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity must be greater than zero.");
@@ -24,11 +25,14 @@ public class LeanList4<T> : IList<T>
       _list = new List<T>(capacity - 4);
   }
 
+  /// <inheritdoc cref="LeanList4{T}"/>
   public LeanList4(ICollection<T> collection) => AddRange(collection);
 
+
+  /// <inheritdoc />
   public int Count { get; private set; }
 
-  /// <inheritdoc cref="IList{T}.Add"/>
+  /// <inheritdoc cref="ICollection{T}.Add"/>
   public void Add(T item)
   {
     if(Count >= 4)
@@ -87,10 +91,11 @@ public class LeanList4<T> : IList<T>
     return -1;
   }
 
-  /// <inheritdoc cref="IList{T}.Contains"/>
+
+  /// <inheritdoc cref="ICollection{T}.Contains"/>
   public bool Contains(T item) => IndexOf(item) >= 0;
 
-  /// <inheritdoc cref="IList{T}.Clear"/>
+  /// <inheritdoc cref="ICollection{T}.Clear"/>
   public void Clear()
   {
     _0 = _1 = _2 = _3 = default;
@@ -98,7 +103,7 @@ public class LeanList4<T> : IList<T>
     Count = 0;
   }
 
-  /// <inheritdoc cref="IList{T}.GetEnumerator"/>
+  /// <inheritdoc cref="IEnumerable{T}.GetEnumerator"/>
   public IEnumerator<T> GetEnumerator()
   {
     for(var i = 0; i < Count; i++)
@@ -107,6 +112,7 @@ public class LeanList4<T> : IList<T>
 
   IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+  /// <inheritdoc />
   public bool IsReadOnly => false;
 
   /// <summary> NotSupported </summary>

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace BeatyBit.Bits;
 
+/// <summary>
+/// Provides extension methods for collections to simplify common operations.
+/// </summary>
 public static class CollectionExtension
 {
   /// <summary>

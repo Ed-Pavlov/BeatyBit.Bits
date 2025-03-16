@@ -3,3 +3,4 @@ Useful bits for reuse in other projects
   * A couple of extensions for working with Dictionary
     * GetOrCreateValue
     * GetValueSafe
+  * LeanList4—list
