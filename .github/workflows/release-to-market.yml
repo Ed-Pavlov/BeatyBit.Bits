@@ -30,7 +30,10 @@ jobs:
 
     -
       name: Publish Nugets to nuget.org
-      run: for file in nupkgs/*.nupkg; do dotnet nuget push "$file" -k ${{ secrets.nuget_api_key }} -s https://api.nuget.org/v3/index.json; done
+      run: |
+        for file in nupkgs/*.nupkg \
+          do echo "$file"; dotnet nuget push "$file" -k ${{ secrets.nuget_api_key }} -s https://api.nuget.org/v3/index.json; \
+        done \
       shell: bash
 
     -
