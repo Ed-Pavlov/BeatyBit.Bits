@@ -1,4 +1,5 @@
-﻿using FakeItEasy;
+﻿using BeatyBit.Bits.Extensibility;
+using FakeItEasy;
 using FluentAssertions;
 
 namespace BeatyBit.Bits.Test;
@@ -75,6 +76,4 @@ public class ApplyTest
     apply.Should().Throw<ArgumentNullException>()
          .WithMessage($"Value cannot be null. (Parameter '{nameof(value)}')");
   }
-
-
 }

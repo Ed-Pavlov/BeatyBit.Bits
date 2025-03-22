@@ -64,5 +64,12 @@
     <Compile Include="..\..\.build\JetBrains.Annotations.cs">
       <Link>.build\JetBrains.Annotations.cs</Link>
     </Compile>
+    <Compile Include="..\..\.build\Roslyn.Annotations.cs">
+      <Link>.build\Roslyn.Annotations.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <None Remove="obj\**" />
   </ItemGroup>
 </Project>
