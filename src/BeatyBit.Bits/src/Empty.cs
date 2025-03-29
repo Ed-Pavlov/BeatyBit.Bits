@@ -17,9 +17,9 @@ public static class Empty
 
   private class EmptyEnumerator : IEnumerator
   {
-    public bool MoveNext() => false;
-    public void Reset() { }
-    public object? Current => null;
+    public bool    MoveNext() => false;
+    public void    Reset()    { }
+    public object? Current    => null;
   }
 }
 

@@ -2,7 +2,7 @@
 
 namespace BeatyBit.Bits.Test;
 
-public class DictionaryExtensionTest
+public class CollectionExtensionTest
 {
   [Test]
   public void get_value_safe_should_return_value()

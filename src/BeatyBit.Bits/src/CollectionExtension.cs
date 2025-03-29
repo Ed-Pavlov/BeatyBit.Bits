@@ -18,7 +18,7 @@ public static class CollectionExtension
   /// <param name="defaultValue">The default value to return if the key is not found.</param>
   /// <returns>The value associated with the key if found; otherwise, the default value.</returns>
   /// <exception cref="ArgumentNullException">Thrown when dictionary or key is null.</exception>
-  public static TValue? GetValueSafe<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue? defaultValue = default)
+  public static TValue? GetValueSafe<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary, TKey key, TValue? defaultValue = default)
   {
     if(dictionary is null) throw new ArgumentNullException(nameof(dictionary));
     if(key is null) throw new ArgumentNullException(nameof(key));
@@ -36,7 +36,7 @@ public static class CollectionExtension
   /// <param name="createValue">The function to create a new value if the key is not found.</param>
   /// <returns>The existing or newly created value associated with the key.</returns>
   /// <exception cref="ArgumentNullException">Thrown when dictionary, key, or createValue is null.</exception>
-  public static TValue GetOrCreateValue<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, Func<TValue> createValue)
+  public static TValue GetOrCreateValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> createValue)
   {
     if(dictionary is null) throw new ArgumentNullException(nameof(dictionary));
     if(key is null) throw new ArgumentNullException(nameof(key));

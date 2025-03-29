@@ -88,15 +88,19 @@ internal sealed class MeansImplicitUseAttribute : Attribute
 internal enum ImplicitUseKindFlags
 {
   Default = Access | Assign | InstantiatedWithFixedConstructorSignature,
+
   /// <summary>Only entity marked with attribute considered used.</summary>
   Access = 1,
+
   /// <summary>Indicates implicit assignment to a member.</summary>
   Assign = 2,
+
   /// <summary>
   /// Indicates implicit instantiation of a type with fixed constructor signature.
   /// That means any unused constructor parameters won't be reported as such.
   /// </summary>
   InstantiatedWithFixedConstructorSignature = 4,
+
   /// <summary>Indicates implicit instantiation of a type.</summary>
   InstantiatedNoFixedConstructorSignature = 8,
 }
@@ -110,10 +114,13 @@ internal enum ImplicitUseTargetFlags
 {
   Default = Itself,
   Itself  = 1,
+
   /// <summary>Members of the type marked with the attribute are considered used.</summary>
   Members = 2,
+
   /// <summary> Inherited entities are considered used. </summary>
   WithInheritors = 4,
+
   /// <summary>Entity marked with the attribute and all its members considered used.</summary>
   WithMembers = Itself | Members
 }
@@ -132,4 +139,23 @@ internal sealed class PublicAPIAttribute : Attribute
   public PublicAPIAttribute(string comment) => Comment = comment;
 
   public string? Comment { get; }
+}
+
+/// <summary>
+/// Tells the code analysis engine if the parameter is completely handled when the invoked method is on stack.
+/// If the parameter is a delegate, indicates that the delegate can only be invoked during method execution
+/// (the delegate can be invoked zero or multiple times, but not stored to some field and invoked later,
+/// when the containing method is no longer on the execution stack).
+/// If the parameter is an enumerable, indicates that it is enumerated while the method is executed.
+/// If <see cref="RequireAwait"/> is true, the attribute will only take effect
+/// if the method invocation is located under the <c>await</c> expression.
+/// </summary>
+[AttributeUsage(AttributeTargets.Parameter)]
+internal sealed class InstantHandleAttribute : Attribute
+{
+  /// <summary>
+  /// Requires the method invocation to be used under the <c>await</c> expression for this attribute to take effect.
+  /// Can be used for delegate/enumerable parameters of <c>async</c> methods.
+  /// </summary>
+  public bool RequireAwait { get; set; }
 }

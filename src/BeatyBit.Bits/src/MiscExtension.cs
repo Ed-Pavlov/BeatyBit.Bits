@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace BeatyBit.Bits;
 
@@ -17,7 +18,7 @@ public static class MiscExtension
   /// <remarks>
   /// This  is useful for configuring objects inline or calling several methods in a row without the need for temporary variables.
   /// </remarks>
-  public static T Apply<T>(this T value, Action<T> action)
+  public static T Apply<T>(this T value, [InstantHandle] Action<T> action)
   {
     if(value is null) throw new ArgumentNullException(nameof(value));
     if(action is null) throw new ArgumentNullException(nameof(action));
