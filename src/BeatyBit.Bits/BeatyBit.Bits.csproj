@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>BeatyBit.Bits</RootNamespace>
+    <RootNamespace>BeatyBit</RootNamespace>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
@@ -16,16 +16,7 @@
     <WarningsAsErrors/>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <BaseIntermediateOutputPath>$(SolutionDir)\.out\obj\</BaseIntermediateOutputPath>
-    <OutputPath>$(SolutionDir)\.out\bin\</OutputPath>
-    <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Label="signing">
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>$(SolutionDir)\.build\beatybit.public.snk</AssemblyOriginatorKeyFile>
-    <PublicSign>true</PublicSign>
   </PropertyGroup>
 
   <PropertyGroup Label="nuspec">
@@ -45,10 +36,29 @@
     <description>Useful bits for reuse in other .NET projects</description>
 
     <PackageReleaseNotes>
-* Maybe monad
-* Dicitionary
-  * GetOrCreateValue
-  * GetValueSafe
+      # Lifetime Management (Lifetime / LifetimeDefinition)
+      Instead of the standard `IDisposable` pattern, which scales poorly across complex object hierarchies, `Lifetime` provides an advanced system for managing object lifecycles.
+
+      ## Leak Prevention
+      No longer need to remember to manually call `Dispose()` in multiple locations. A resource is simply "bound" to the current scope.
+
+      ## Hierarchical Structure:
+      `Lifetime` enables the creation of dependency trees. When a parent `LifetimeDefinition` is terminated, all child `Lifetimes` and their associated resources are automatically released.
+
+      ## Determinism:
+      All resources (such as files, network connections, or event subscriptions) are released predictably and in the correct order.
+
+      # PathBuddy: Type-Safe Path Management
+      PathBuddy is a lightweight library designed to replace fragile string-based path manipulation with strongly-typed `AbsolutePath` and `RelativePath` objects. It integrates with a `Lifetime` system to handle temporary file cleanup automatically.
+
+      ## Purpose
+      The primary goal is to eliminate "path-string soup" and manual resource cleanup. By distinguishing between absolute and relative paths at the type level, PathBuddy prevents common bugs (like combining two absolute paths).
+
+      ## Intuitive Path Combining
+      Uses the / operator for clean, readable path joining (e.g., baseDir / "logs" / "app.log"), replacing cumbersome Path.Combine calls.
+
+      # Fixes
+      `LeanList` inherits IReadonlyList
     </PackageReleaseNotes>
   </PropertyGroup>
 

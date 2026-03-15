@@ -9,7 +9,7 @@ namespace BeatyBit.Bits;
 /// A memory-efficient list implementation that stores first four elements inline and falls back to <see cref="List{T}"/> for additional elements.
 /// </summary>
 /// <typeparam name="T">The type of elements in the list.</typeparam>
-public class LeanList4<T> : IList<T>
+public class LeanList4<T> : IList<T>, IReadOnlyList<T>
 {
   private T?       _0;
   private T?       _1;
@@ -28,8 +28,7 @@ public class LeanList4<T> : IList<T>
   /// <inheritdoc cref="LeanList4{T}"/>
   public LeanList4(ICollection<T> collection) => AddRange(collection);
 
-
-  /// <inheritdoc />
+  /// <inheritdoc cref="IReadOnlyCollection{T}.Count" />
   public int Count { get; private set; }
 
   /// <inheritdoc cref="ICollection{T}.Add"/>

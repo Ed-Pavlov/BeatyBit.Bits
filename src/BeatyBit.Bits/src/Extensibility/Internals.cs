@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace BeatyBit.Bits.Extensibility;
+namespace BeatyBit.Extensibility;
 
 /// <summary>
 /// Provides extension methods for accessing internal fields or properties in interfaces implementing the <see cref="IInternal{T}"/> series of interfaces.

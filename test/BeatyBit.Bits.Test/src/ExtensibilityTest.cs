@@ -1,4 +1,4 @@
-﻿using BeatyBit.Bits.Extensibility;
+﻿using BeatyBit.Extensibility;
 using FluentAssertions;
 
 namespace BeatyBit.Bits.Test;
