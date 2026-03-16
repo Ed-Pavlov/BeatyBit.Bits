@@ -588,8 +588,9 @@ public class PathBuddyTest
   public void AbsolutePath_Equals_should_be_case_sensitive()
   {
     // --arrange
-    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/FILE.txt"));
-    var path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    // Use direct absolute paths without normalization
+    var path1 = AbsolutePath.Parse("/some/path/FILE.txt");
+    var path2 = AbsolutePath.Parse("/some/path/file.txt");
 
     // --act
     var result = path1.Equals(path2);
@@ -634,8 +635,9 @@ public class PathBuddyTest
   public void AbsolutePath_GetHashCode_should_be_case_sensitive()
   {
     // --arrange
-    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/FILE.txt"));
-    var path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    // Use direct absolute paths without normalization
+    var path1 = AbsolutePath.Parse("/some/path/FILE.txt");
+    var path2 = AbsolutePath.Parse("/some/path/file.txt");
 
     // --act
     var hash1 = path1.GetHashCode();
@@ -962,8 +964,9 @@ public class PathBuddyTest
   public void AbsolutePath_Equals_object_should_be_case_sensitive()
   {
     // --arrange
-    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/FILE.txt"));
-    object path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    // Use direct absolute paths without normalization
+    var path1 = AbsolutePath.Parse("/some/path/FILE.txt");
+    object path2 = AbsolutePath.Parse("/some/path/file.txt");
 
     // --act
     var result = path1.Equals(path2);
@@ -1076,8 +1079,9 @@ public class PathBuddyTest
   public void PathBase_Equals_object_should_be_case_sensitive()
   {
     // --arrange
-    PathBase path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/FILE.txt"));
-    object path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    // Use direct absolute paths without normalization
+    PathBase path1 = AbsolutePath.Parse("/some/path/FILE.txt");
+    object path2 = AbsolutePath.Parse("/some/path/file.txt");
 
     // --act
     var result = path1.Equals(path2);
