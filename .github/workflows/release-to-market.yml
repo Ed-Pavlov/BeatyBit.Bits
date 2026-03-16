@@ -14,6 +14,10 @@ jobs:
       contents: write
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Download artifact via GitHub CLI
         shell: pwsh
@@ -31,7 +35,7 @@ jobs:
           Write-Host "Found Run ID: $runId. Downloading artifacts..."
 
           # Download the artifact
-          gh run download $runId --name Artifacts --repo ${{ github.repository }}
+          gh run download $runId --name Artifacts
 
       - name: Read version from JSON
         shell: pwsh
@@ -69,4 +73,4 @@ jobs:
           $files = Get-ChildItem -Path "${{ env.nugets-dir }}" -Filter "*.nupkg" | Select-Object -ExpandProperty FullName
 
           # Create the release and attach the files
-          gh release create "v${{ env.NUGET_VERSION }}" $files --title "v${{ env.NUGET_VERSION }}" --generate-notes --repo ${{ github.repository }}
+          gh release create "v${{ env.NUGET_VERSION }}" $files --title "v${{ env.NUGET_VERSION }}" --generate-notes
