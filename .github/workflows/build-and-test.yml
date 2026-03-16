@@ -17,15 +17,15 @@ env:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
 
@@ -58,7 +58,7 @@ jobs:
         run: dotnet test --no-build -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover
 
       - name: Pack
-        run: dotnet pack --no-build -o:${{ env.nugets-dir }} -p:PackageVersion=${{ env.SemVer }}
+        run: dotnet pack --no-build -o:${{ env.nugets-dir }} -p:PackageVersion=${{ env.AssemblySemVer }}
 
       - name: Store Version JSON
         shell: pwsh
@@ -67,7 +67,7 @@ jobs:
           $json = @{
             "assembly-version" = "${{ env.AssemblySemVer }}"
             "assembly-file-version" = "${{ env.AssemblySemFileVer }}"
-            "nuget-version" = "${{ env.SemVer }}"
+            "nuget-version" = "${{ env.AssemblySemVer }}"
           } | ConvertTo-Json
           Set-Content -Path "${{ env.artifacts-dir }}/version.json" -Value $json -Encoding UTF8
 
@@ -78,7 +78,7 @@ jobs:
           Copy-Item -Path "./.out/bin/netstandard2.0/*.pdb" -Destination "${{ env.pdb-dir }}" -Force -ErrorAction SilentlyContinue
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Artifacts
           path: ${{ env.artifacts-dir }}/
