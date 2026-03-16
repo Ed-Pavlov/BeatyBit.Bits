@@ -14,7 +14,7 @@ ___
 </p>
 
 
-**Useful bits of architecture and code**
+**Useful bits of architecture and code for .NET projects**
 
 [![Build & Test](https://github.com/Ed-Pavlov/BeatyBit.Bits/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/Ed-Pavlov/BeatyBit.Bits/actions/workflows/build-and-test.yml)
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Ed-Pavlov/21c1ecd6072def6cf2300fe365aa46b9/raw/bits-test-coverage.json)

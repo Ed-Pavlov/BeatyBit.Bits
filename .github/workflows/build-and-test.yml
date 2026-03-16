@@ -55,7 +55,7 @@ jobs:
 
       # Run tests and generate an OpenCover report
       - name: Test
-        run: dotnet test --no-build -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover
+        run: dotnet test --no-build --settings .runsettings --collect:"XPlat Code Coverage"
 
       - name: Pack
         run: dotnet pack --no-build -o:${{ env.nugets-dir }} -p:PackageVersion=${{ env.AssemblySemVer }}
@@ -87,20 +87,31 @@ jobs:
       - name: Create & Upload Test Coverage Badge
         shell: pwsh
         run: |
-          # Parse the OpenCover XML file to get the coverage percentage
-          $xmlPath = "test/BeatyBit.Bits.Test/TestResults/coverage.opencover.xml"
+          # 1. Dynamically find the report file, as it is located in a folder with a GUID
+          $xmlPath = Get-ChildItem -Path . -Filter "coverage.cobertura.xml" -Recurse | Select-Object -First 1 -ExpandProperty FullName
+
+          if (-not $xmlPath) {
+            Write-Error "Coverage file not found!"
+            exit 1
+          }
+
+          Write-Host "Found coverage file at: $xmlPath"
+
+          # 2. Parse the Cobertura XML
           [xml]$xml = Get-Content $xmlPath
-          $coverage = $xml.CoverageSession.Summary.sequenceCoverage
-          $percentage = [math]::Round([decimal]$coverage, 2)
+
+          # In Cobertura, line-rate is a decimal (from 0.0 to 1.0), so we multiply by 100
+          $lineRate = $xml.coverage.'line-rate'
+          $percentage = [math]::Round([decimal]$lineRate * 100, 2)
 
           Write-Host "Code coverage percentage: $percentage%"
 
-          # Determine badge color based on the percentage score
+          # 3. Determine the badge color
           $color = "red"
           if ($percentage -ge 80) { $color = "brightgreen" }
           elseif ($percentage -ge 60) { $color = "yellow" }
 
-          # Create JSON payload for the Shields.io dynamic badge format
+          # 4. Create JSON payload for Shields.io
           $badgeContent = @{
             schemaVersion = 1
             label = "Unit Test Coverage"
@@ -110,17 +121,17 @@ jobs:
 
           Write-Host "Badge data: $badgeContent"
 
-          # Prepare the Gist API update payload
+          # 5. Prepare the data for the GitHub Gist API
           $gistData = @{
             description = "Updated coverage badge"
             files = @{
               "bits-test-coverage.json" = @{
-                content = $badgeContent
+              content = $badgeContent
               }
             }
           } | ConvertTo-Json -Depth 5
 
-          # Send PATCH request to GitHub Gist API
+          # 6. Send the PATCH request
           Invoke-RestMethod -Uri "https://api.github.com/gists/21c1ecd6072def6cf2300fe365aa46b9" `
                             -Method Patch `
                             -Headers @{

@@ -300,4 +300,675 @@ public class PathBuddyTest
     // --assert
     directory?.FullPath.Should().Be(expected);
   }
+
+  [Test]
+  public void RelativePath_FileName_should_be_correct()
+  {
+    // --arrange
+    var path = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var fileName = path.FileName;
+
+    // --assert
+    fileName.Should().Be("file.txt");
+  }
+
+  [Test]
+  public void RelativePath_FileNameWithoutExtension_should_be_correct()
+  {
+    // --arrange
+    var path = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var fileName = path.FileNameWithoutExtension;
+
+    // --assert
+    fileName.Should().Be("file");
+  }
+
+  [Test]
+  public void RelativePath_Extension_should_be_correct()
+  {
+    // --arrange
+    var path = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var extension = path.Extension;
+
+    // --assert
+    extension.Should().Be(".txt");
+  }
+
+  [Test]
+  public void RelativePath_HasExtension_should_be_true_when_extension_exists()
+  {
+    // --arrange
+    var path = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var hasExtension = path.HasExtension();
+
+    // --assert
+    hasExtension.Should().BeTrue();
+  }
+
+  [Test]
+  public void RelativePath_HasExtension_should_be_false_when_extension_not_exists()
+  {
+    // --arrange
+    var path = RelativePath.Parse("some/path/file");
+
+    // --act
+    var hasExtension = path.HasExtension();
+
+    // --assert
+    hasExtension.Should().BeFalse();
+  }
+
+  [Test]
+  public void RelativePath_ChangeExtension_should_be_correct()
+  {
+    // --arrange
+    var path = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var newPath = path.ChangeExtension(".md");
+
+    // --assert
+    newPath.FullPath.Should().Be(Path.ChangeExtension(path.FullPath, ".md"));
+  }
+
+  [Test]
+  public void RelativePath_Equals_should_be_true_for_same_paths()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/file.txt");
+    var path2 = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeTrue();
+  }
+
+  [Test]
+  public void RelativePath_Equals_should_be_false_for_different_paths()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/file1.txt");
+    var path2 = RelativePath.Parse("some/path/file2.txt");
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void RelativePath_Equals_should_be_case_insensitive()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/FILE.txt");
+    var path2 = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeTrue();
+  }
+
+  [Test]
+  public void RelativePath_GetHashCode_should_be_same_for_equal_paths()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/file.txt");
+    var path2 = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var hash1 = path1.GetHashCode();
+    var hash2 = path2.GetHashCode();
+
+    // --assert
+    hash1.Should().Be(hash2);
+  }
+
+  [Test]
+  public void RelativePath_GetHashCode_should_be_case_insensitive()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/FILE.txt");
+    var path2 = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var hash1 = path1.GetHashCode();
+    var hash2 = path2.GetHashCode();
+
+    // --assert
+    hash1.Should().Be(hash2);
+  }
+
+  [Test]
+  public void RelativePath_OperatorEquality_should_be_true_for_same_paths()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/file.txt");
+    var path2 = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var result = path1 == path2;
+
+    // --assert
+    result.Should().BeTrue();
+  }
+
+  [Test]
+  public void RelativePath_OperatorEquality_should_be_false_for_different_paths()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/file1.txt");
+    var path2 = RelativePath.Parse("some/path/file2.txt");
+
+    // --act
+    var result = path1 == path2;
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void RelativePath_OperatorInequality_should_be_false_for_same_paths()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/file.txt");
+    var path2 = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var result = path1 != path2;
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void RelativePath_OperatorInequality_should_be_true_for_different_paths()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/file1.txt");
+    var path2 = RelativePath.Parse("some/path/file2.txt");
+
+    // --act
+    var result = path1 != path2;
+
+    // --assert
+    result.Should().BeTrue();
+  }
+
+  [Test]
+  public void AbsolutePath_Equals_should_be_true_for_same_paths()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    var path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeTrue();
+  }
+
+  [Test]
+  public void AbsolutePath_Equals_should_be_false_for_different_paths()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/file1.txt"));
+    var path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file2.txt"));
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void AbsolutePath_Equals_should_be_case_insensitive()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/FILE.txt"));
+    var path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeTrue();
+  }
+
+  [Test]
+  public void AbsolutePath_GetHashCode_should_be_same_for_equal_paths()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    var path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var hash1 = path1.GetHashCode();
+    var hash2 = path2.GetHashCode();
+
+    // --assert
+    hash1.Should().Be(hash2);
+  }
+
+  [Test]
+  public void AbsolutePath_GetHashCode_should_be_case_insensitive()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/FILE.txt"));
+    var path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var hash1 = path1.GetHashCode();
+    var hash2 = path2.GetHashCode();
+
+    // --assert
+    hash1.Should().Be(hash2);
+  }
+
+  [Test]
+  public void AbsolutePath_OperatorEquality_should_be_true_for_same_paths()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    var path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var result = path1 == path2;
+
+    // --assert
+    result.Should().BeTrue();
+  }
+
+  [Test]
+  public void AbsolutePath_OperatorEquality_should_be_false_for_different_paths()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/file1.txt"));
+    var path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file2.txt"));
+
+    // --act
+    var result = path1 == path2;
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void AbsolutePath_OperatorInequality_should_be_false_for_same_paths()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    var path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var result = path1 != path2;
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void AbsolutePath_OperatorInequality_should_be_true_for_different_paths()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/file1.txt"));
+    var path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file2.txt"));
+
+    // --act
+    var result = path1 != path2;
+
+    // --assert
+    result.Should().BeTrue();
+  }
+
+  [Test]
+  public void AbsolutePath_GetTempDirectory_should_return_valid_path()
+  {
+    // --act
+    var tempDir = AbsolutePath.GetTempDirectory();
+
+    // --assert
+    tempDir.Should().NotBeNull();
+    tempDir.DirectoryExist().Should().BeTrue();
+    Path.IsPathRooted(tempDir.FullPath).Should().BeTrue();
+  }
+
+  [Test]
+  public void AbsolutePathExtension_SetLifetime_should_delete_file_on_lifetime_termination()
+  {
+    // --arrange
+    AbsolutePath tempFile;
+
+    using(var lifetime = Lifetime.CreateDisposable())
+    {
+      tempFile = AbsolutePath.GetTempDirectory() / "test-file.txt";
+      tempFile.CreateFile();
+
+      // --act
+      tempFile.SetLifetime(lifetime);
+
+      // --assert
+      tempFile.FileExist().Should().BeTrue();
+    }
+
+    // --assert
+    tempFile.FileExist().Should().BeFalse();
+  }
+
+  [Test]
+  public void AbsolutePathExtension_SetLifetime_should_delete_directory_on_lifetime_termination()
+  {
+    // --arrange
+    AbsolutePath tempDir;
+
+    using(var lifetime = Lifetime.CreateDisposable())
+    {
+      tempDir = AbsolutePath.GetTempDirectory() / "test-directory";
+      tempDir.CreateDirectory();
+
+      // --act
+      tempDir.SetLifetime(lifetime);
+
+      // --assert
+      tempDir.DirectoryExist().Should().BeTrue();
+    }
+
+    // --assert
+    tempDir.DirectoryExist().Should().BeFalse();
+  }
+
+  [Test]
+  public void AbsolutePathExtension_SetLifetime_should_return_same_path_for_chaining()
+  {
+    // --arrange
+    using var lifetime = Lifetime.CreateDisposable();
+    var tempFile = AbsolutePath.GetTempDirectory() / "test-file.txt";
+    tempFile.CreateFile();
+
+    // --act
+    var result = tempFile.SetLifetime(lifetime);
+
+    // --assert
+    result.Should().BeSameAs(tempFile);
+  }
+
+  [Test]
+  public void AbsolutePath_Equals_object_should_be_true_for_same_paths()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    object path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeTrue();
+  }
+
+  [Test]
+  public void AbsolutePath_Equals_object_should_be_false_for_different_paths()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/file1.txt"));
+    object path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file2.txt"));
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void AbsolutePath_Equals_object_should_be_false_for_null()
+  {
+    // --arrange
+    var path = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    object? nullObj = null;
+
+    // --act
+    var result = path.Equals(nullObj);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void AbsolutePath_Equals_object_should_be_false_for_different_type()
+  {
+    // --arrange
+    var path = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    object obj = "some/path/file.txt";
+
+    // --act
+    var result = path.Equals(obj);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void AbsolutePath_Equals_object_should_be_false_for_relative_path()
+  {
+    // --arrange
+    var absolutePath = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    object relativePath = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var result = absolutePath.Equals(relativePath);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void RelativePath_Equals_object_should_be_true_for_same_paths()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/file.txt");
+    object path2 = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeTrue();
+  }
+
+  [Test]
+  public void RelativePath_Equals_object_should_be_false_for_different_paths()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/file1.txt");
+    object path2 = RelativePath.Parse("some/path/file2.txt");
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void RelativePath_Equals_object_should_be_false_for_null()
+  {
+    // --arrange
+    var path = RelativePath.Parse("some/path/file.txt");
+    object? nullObj = null;
+
+    // --act
+    var result = path.Equals(nullObj);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void RelativePath_Equals_object_should_be_false_for_different_type()
+  {
+    // --arrange
+    var path = RelativePath.Parse("some/path/file.txt");
+    object obj = "some/path/file.txt";
+
+    // --act
+    var result = path.Equals(obj);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void RelativePath_Equals_object_should_be_false_for_absolute_path()
+  {
+    // --arrange
+    var relativePath = RelativePath.Parse("some/path/file.txt");
+    object absolutePath = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var result = relativePath.Equals(absolutePath);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void RelativePath_Equals_object_should_be_case_insensitive()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/FILE.txt");
+    object path2 = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeTrue();
+  }
+
+  [Test]
+  public void AbsolutePath_Equals_object_should_be_case_insensitive()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/FILE.txt"));
+    object path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeTrue();
+  }
+
+  [Test]
+  public void PathBase_Equals_object_should_be_true_for_same_absolute_paths()
+  {
+    // --arrange
+    PathBase path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    object path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeTrue();
+  }
+
+  [Test]
+  public void PathBase_Equals_object_should_be_true_for_same_relative_paths()
+  {
+    // --arrange
+    PathBase path1 = RelativePath.Parse("some/path/file.txt");
+    object path2 = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeTrue();
+  }
+
+  [Test]
+  public void PathBase_Equals_object_should_be_false_for_different_paths()
+  {
+    // --arrange
+    PathBase path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/file1.txt"));
+    object path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file2.txt"));
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void PathBase_Equals_object_should_be_false_for_null()
+  {
+    // --arrange
+    PathBase path = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    object? nullObj = null;
+
+    // --act
+    var result = path.Equals(nullObj);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void PathBase_Equals_object_should_be_false_for_different_type()
+  {
+    // --arrange
+    PathBase path = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    object obj = "some/path/file.txt";
+
+    // --act
+    var result = path.Equals(obj);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void PathBase_Equals_object_should_be_false_for_mixed_path_types()
+  {
+    // --arrange
+    PathBase absolutePath = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+    object relativePath = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var result = absolutePath.Equals(relativePath);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  public void PathBase_Equals_object_should_be_case_insensitive()
+  {
+    // --arrange
+    PathBase path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/FILE.txt"));
+    object path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeTrue();
+  }
 }

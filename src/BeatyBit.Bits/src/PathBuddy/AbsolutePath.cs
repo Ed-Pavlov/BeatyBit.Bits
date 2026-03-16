@@ -74,7 +74,7 @@ public class AbsolutePath : PathBase
 
   // Equality
   /// <summary>Determines whether the specified object is equal to the current object.</summary>
-  public override bool Equals(object? obj) => obj is AbsolutePath ap && string.Equals(FullPath, ap.FullPath, StringComparison.OrdinalIgnoreCase);
+  public override bool Equals(object? obj) => obj is AbsolutePath ap && string.Equals(FullPath, ap.FullPath, OsDependentComparisonType);
 
   /// <summary>Serves as the default hash function.</summary>
   public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(FullPath);

@@ -615,4 +615,242 @@ public class LifetimeTest
     public bool WasCalled { get; private set; }
     public void OnTermination(Lifetime lifetime) => WasCalled = true;
   }
+
+  #region LifetimeExtension Tests
+
+  [Test]
+  public void setLifetime_should_return_disposable()
+  {
+    // --arrange
+    using var definition = new LifetimeDefinition();
+    var disposable = new TestDisposable();
+
+    // --act
+    var result = disposable.SetLifetime(definition.Lifetime);
+
+    // --assert
+    result.Should().BeSameAs(disposable);
+  }
+
+  [Test]
+  public void setLifetime_should_dispose_when_lifetime_terminated()
+  {
+    // --arrange
+    using var definition = new LifetimeDefinition();
+    var disposable = new TestDisposable();
+
+    // --act
+    disposable.SetLifetime(definition.Lifetime);
+    definition.Terminate();
+
+    // --assert
+    disposable.IsDisposed.Should().BeTrue();
+  }
+
+  [Test]
+  public void setLifetime_should_throw_when_lifetime_already_terminated()
+  {
+    // --arrange
+    using var definition = new LifetimeDefinition();
+    definition.Terminate();
+    var disposable = new TestDisposable();
+
+    // --act
+    var act = () => disposable.SetLifetime(definition.Lifetime);
+
+    // --assert
+    act.Should().Throw<InvalidOperationException>();
+  }
+
+  [Test]
+  public void setLifetime_should_allow_chaining()
+  {
+    // --arrange
+    using var definition = new LifetimeDefinition();
+
+    // --act
+    var result = new TestDisposable()
+      .SetLifetime(definition.Lifetime);
+
+    // --assert
+    result.Should().NotBeNull();
+    result.IsDisposed.Should().BeFalse();
+
+    definition.Terminate();
+    result.IsDisposed.Should().BeTrue();
+  }
+
+  #endregion
+
+  #region SequentialLifetimes Tests
+
+  [Test]
+  public void sequentialLifetimes_initial_lifetime_should_be_terminated()
+  {
+    // --arrange
+    using var parent = new LifetimeDefinition();
+
+    // --act
+    var sequential = new SequentialLifetimes(parent.Lifetime);
+
+    // --assert
+    // Constructor creates terminated initial state
+    parent.Status.Should().Be(LifetimeStatus.Alive);
+  }
+
+  [Test]
+  public void sequentialLifetimes_next_should_return_new_alive_lifetime()
+  {
+    // --arrange
+    using var parent = new LifetimeDefinition();
+    var sequential = new SequentialLifetimes(parent.Lifetime);
+
+    // --act
+    var lifetime = sequential.Next();
+
+    // --assert
+    lifetime.IsAlive.Should().BeTrue();
+  }
+
+  [Test]
+  public void sequentialLifetimes_next_should_terminate_previous_lifetime()
+  {
+    // --arrange
+    using var parent = new LifetimeDefinition();
+    var sequential = new SequentialLifetimes(parent.Lifetime);
+    var first = sequential.Next();
+
+    // --act
+    var second = sequential.Next();
+
+    // --assert
+    first.IsAlive.Should().BeFalse();
+    second.IsAlive.Should().BeTrue();
+  }
+
+  [Test]
+  public void sequentialLifetimes_terminateCurrent_should_terminate_current_lifetime()
+  {
+    // --arrange
+    using var parent = new LifetimeDefinition();
+    var sequential = new SequentialLifetimes(parent.Lifetime);
+    var current = sequential.Next();
+
+    // --act
+    sequential.TerminateCurrent();
+
+    // --assert
+    current.IsAlive.Should().BeFalse();
+  }
+
+  [Test]
+  public void sequentialLifetimes_terminateCurrent_multiple_times_should_not_throw()
+  {
+    // --arrange
+    using var parent = new LifetimeDefinition();
+    var sequential = new SequentialLifetimes(parent.Lifetime);
+    sequential.Next();
+
+    // --act
+    var act = () =>
+    {
+      sequential.TerminateCurrent();
+      sequential.TerminateCurrent();
+      sequential.TerminateCurrent();
+    };
+
+    // --assert
+    act.Should().NotThrow();
+  }
+
+  [Test]
+  public void sequentialLifetimes_next_should_terminate_parent_lifetime_resources()
+  {
+    // --arrange
+    using var parent = new LifetimeDefinition();
+    var sequential = new SequentialLifetimes(parent.Lifetime);
+    var first = sequential.Next();
+    var executed = false;
+    first.OnTermination(() => executed = true);
+
+    // --act
+    sequential.Next();
+
+    // --assert
+    executed.Should().BeTrue();
+  }
+
+  [Test]
+  public void sequentialLifetimes_child_should_terminate_when_parent_terminated()
+  {
+    // --arrange
+    using var parent = new LifetimeDefinition();
+    var sequential = new SequentialLifetimes(parent.Lifetime);
+    var child = sequential.Next();
+
+    // --act
+    parent.Terminate();
+
+    // --assert
+    child.IsAlive.Should().BeFalse();
+  }
+
+  [Test]
+  public void sequentialLifetimes_multiple_next_calls_should_create_independent_lifetimes()
+  {
+    // --arrange
+    using var parent = new LifetimeDefinition();
+    var sequential = new SequentialLifetimes(parent.Lifetime);
+
+    // --act
+    var first = sequential.Next();
+    var second = sequential.Next();
+    var third = sequential.Next();
+
+    // --assert
+    first.IsAlive.Should().BeFalse();
+    second.IsAlive.Should().BeFalse();
+    third.IsAlive.Should().BeTrue();
+  }
+
+  [Test]
+  public void sequentialLifetimes_next_after_parent_terminated_should_return_terminated_lifetime()
+  {
+    // --arrange
+    using var parent = new LifetimeDefinition();
+    var sequential = new SequentialLifetimes(parent.Lifetime);
+    parent.Terminate();
+
+    // --act
+    var lifetime = sequential.Next();
+
+    // --assert
+    lifetime.IsAlive.Should().BeFalse();
+  }
+
+  [Test]
+  public void sequentialLifetimes_resources_should_be_terminated_in_sequence()
+  {
+    // --arrange
+    using var parent = new LifetimeDefinition();
+    var sequential = new SequentialLifetimes(parent.Lifetime);
+    var order = new List<int>();
+
+    // --act
+    var first = sequential.Next();
+    first.OnTermination(() => order.Add(1));
+
+    var second = sequential.Next();
+    second.OnTermination(() => order.Add(2));
+
+    var third = sequential.Next();
+    third.OnTermination(() => order.Add(3));
+
+    parent.Terminate();
+
+    // --assert
+    order.Should().Equal(1, 2, 3);
+  }
+
+  #endregion
 }
