@@ -9,11 +9,10 @@ namespace BeatyBit.PathBuddy;
 public abstract class PathBase : IEquatable<PathBase>
 {
   /// <summary>
-  /// The string comparison type used for path comparisons.
-  /// Uses case-insensitive comparison on Windows and case-sensitive comparison on other platforms.
+  /// The string comparer used for path comparisons.
+  /// Uses case-insensitive comparer on Windows and case-sensitive comparer on other platforms.
   /// </summary>
-  protected static readonly StringComparison OsDependentComparisonType
-    = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+  protected static readonly StringComparer OsDependentStringComparer = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
 
   /// <summary>
   /// The underlying string representation of the path.
@@ -34,8 +33,5 @@ public abstract class PathBase : IEquatable<PathBase>
 
   /// <inheritdoc/>
   public bool Equals(PathBase? other)
-    => other is not null && ( ReferenceEquals(this, other) || string.Equals(FullPath, other.FullPath, OsDependentComparisonType) );
-
-  /// <inheritdoc/>
-  public override int GetHashCode() => FullPath.GetHashCode();
+    => other is not null && ( ReferenceEquals(this, other) || OsDependentStringComparer.Equals(FullPath, other.FullPath) );
 }

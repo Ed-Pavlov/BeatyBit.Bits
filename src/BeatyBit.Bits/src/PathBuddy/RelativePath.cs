@@ -25,26 +25,29 @@ public class RelativePath : PathBase
 
   internal static string ThrowIfInvalid(string path)
     => path is null            ? throw new ArgumentNullException(nameof(path)) :
-       Path.IsPathRooted(path) ? throw new ArgumentException($"The file system path {path} is absolute path.")
-                                 : path;
+       Path.IsPathRooted(path) ? throw new ArgumentException($"The file system path {path} is absolute path.") : path;
 
   /// <summary>
   /// Combines two relative paths.
   /// </summary>
   public static RelativePath operator /(RelativePath left, RelativePath right) => new RelativePath(Path.Combine(left.FullPath, right.FullPath));
+
   /// <summary>
   /// Combines a relative path with a string segment.
   /// </summary>
-  public static RelativePath operator /(RelativePath left, string       right) => new RelativePath(Path.Combine(left.FullPath, ThrowIfInvalid(right)));
+  public static RelativePath operator /(RelativePath left, string right) => new RelativePath(Path.Combine(left.FullPath, ThrowIfInvalid(right)));
 
   /// <summary>Gets the file name and extension of the path string.</summary>
-  public string FileName                 => Path.GetFileName(FullPath);
+  public string FileName => Path.GetFileName(FullPath);
+
   /// <summary>Gets the file name of the file path without the extension.</summary>
   public string FileNameWithoutExtension => Path.GetFileNameWithoutExtension(FullPath);
+
   /// <summary>Gets the extension of the path string.</summary>
-  public string Extension                => Path.GetExtension(FullPath);
+  public string Extension => Path.GetExtension(FullPath);
+
   /// <summary>Determines whether a path includes a file name extension.</summary>
-  public bool   HasExtension()           => Path.HasExtension(FullPath);
+  public bool HasExtension() => Path.HasExtension(FullPath);
 
   /// <summary>Changes the extension of a path string.</summary>
   public RelativePath ChangeExtension(string? extension) => new RelativePath(Path.ChangeExtension(FullPath, extension));
@@ -62,15 +65,15 @@ public class RelativePath : PathBase
 
   // Equality
   /// <summary>Determines whether the specified object is equal to the current object.</summary>
-  public override bool Equals(object? obj) => obj is RelativePath rp && string.Equals(FullPath, rp.FullPath, OsDependentComparisonType);
+  public override bool Equals(object? obj) => obj is RelativePath rp && OsDependentStringComparer.Equals(FullPath, rp.FullPath);
 
   /// <summary>Serves as the default hash function.</summary>
-  public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(FullPath);
+  public override int GetHashCode() => OsDependentStringComparer.GetHashCode(FullPath);
 
   /// <summary>Determines whether two specified <see cref="RelativePath"/> objects have the same value.</summary>
   public static bool operator ==(RelativePath? left, RelativePath? right)
-    => ReferenceEquals(left, right) || (left is not null && right is not null && left.Equals(right));
+    => ReferenceEquals(left, right) || ( left is not null && right is not null && left.Equals(right) );
 
   /// <summary>Determines whether two specified <see cref="RelativePath"/> objects have different values.</summary>
-  public static bool operator !=(RelativePath? left, RelativePath? right) => !(left == right);
+  public static bool operator !=(RelativePath? left, RelativePath? right) => ! ( left == right );
 }

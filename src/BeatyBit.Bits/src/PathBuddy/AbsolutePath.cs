@@ -74,10 +74,10 @@ public class AbsolutePath : PathBase
 
   // Equality
   /// <summary>Determines whether the specified object is equal to the current object.</summary>
-  public override bool Equals(object? obj) => obj is AbsolutePath ap && string.Equals(FullPath, ap.FullPath, OsDependentComparisonType);
+  public override bool Equals(object? obj) => obj is AbsolutePath ap && OsDependentStringComparer.Equals(FullPath, ap.FullPath);
 
   /// <summary>Serves as the default hash function.</summary>
-  public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(FullPath);
+  public override int GetHashCode() => OsDependentStringComparer.GetHashCode(FullPath);
 
   /// <summary>Determines whether two specified <see cref="AbsolutePath"/> objects have the same value.</summary>
   public static bool operator ==(AbsolutePath? left, AbsolutePath? right)
