@@ -12,97 +12,119 @@ on:
 env:
   configuration: Release
   artifacts-dir: artifacts
-  nugets-dir:    artifacts/nupkgs
-  pdb-dir:       artifacts/pdb
+  nugets-dir: artifacts/nupkgs
+  pdb-dir: artifacts/pdb
 
 jobs:
   build:
     runs-on: windows-latest
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v4.1.1
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      -
-        name: Setup .NET
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
 
-      -
-        name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v3.1.11
-        with:
-          versionSpec: '6.0.x'
+      - name: Install GitVersion
+        run: dotnet tool install --global GitVersion.Tool --version 6.0.*
 
-      -
-        name: Use GitVersion
-        id:   gitversion # step id used as reference for output values
-        uses: gittools/actions/gitversion/execute@v3.1.11
+      - name: Execute GitVersion
+        id: gitversion
+        shell: pwsh
+        run: |
+          # Run GitVersion and parse the JSON output
+          $gitVersion = dotnet-gitversion | ConvertFrom-Json
 
-      # Build
-      -
-        name: Build
-        run:  >
+          # Write necessary variables directly to the GitHub Environment file
+          "AssemblySemVer=$($gitVersion.AssemblySemVer)" >> $env:GITHUB_ENV
+          "AssemblySemFileVer=$($gitVersion.AssemblySemFileVer)" >> $env:GITHUB_ENV
+          "InformationalVersion=$($gitVersion.InformationalVersion)" >> $env:GITHUB_ENV
+          "SemVer=$($gitVersion.SemVer)" >> $env:GITHUB_ENV
+
+      - name: Build
+        run: >
           dotnet build
-          -c ${{env.configuration}}
-          -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
-          -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
-          -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
+          -c ${{ env.configuration }}
+          -p:AssemblyVersion=${{ env.AssemblySemVer }}
+          -p:FileVersion=${{ env.AssemblySemFileVer }}
+          -p:InformationalVersion=${{ env.InformationalVersion }}
 
-      # Run tests
-      -
-        name: Test
+      # Run tests and generate an OpenCover report
+      - name: Test
         run: dotnet test --no-build -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover
 
-      # Create and place nuget packages into env.nugets-dir directory
-      -
-        name: Pack
-        run: dotnet pack --no-build -o:${{ env.nugets-dir }} -p:PackageVersion=${{ steps.gitversion.outputs.semVer }}
+      - name: Pack
+        run: dotnet pack --no-build -o:${{ env.nugets-dir }} -p:PackageVersion=${{ env.SemVer }}
 
-      -
-        name: Store Version
-        uses: jsdaniell/create-json@v1.2.3
-        with:
-          name: version.json
-          json: |
-            {
-            "assembly-version": "${{ steps.gitversion.outputs.assemblySemVer }}",
-            "assembly-file-version": "${{ steps.gitversion.outputs.assemblySemFileVer }}",
-            "nuget-version": "${{ steps.gitversion.outputs.semVer }}"
-            }
-          dir:  ${{ env.artifacts-dir }}
-
-      -
-        name: Store PDB
+      - name: Store Version JSON
+        shell: pwsh
         run: |
-          robocopy .out\bin\netstandard2.0\ ${{ env.pdb-dir }} *.pdb
-          if ($lastexitcode -lt 8) { $global:lastexitcode = 0 }
+          New-Item -Path "${{ env.artifacts-dir }}" -ItemType Directory -Force | Out-Null
+          $json = @{
+            "assembly-version" = "${{ env.AssemblySemVer }}"
+            "assembly-file-version" = "${{ env.AssemblySemFileVer }}"
+            "nuget-version" = "${{ env.SemVer }}"
+          } | ConvertTo-Json
+          Set-Content -Path "${{ env.artifacts-dir }}/version.json" -Value $json -Encoding UTF8
 
-      -
-        name: Upload Artifacts
+      - name: Store PDB
+        shell: pwsh
+        run: |
+          New-Item -Path "${{ env.pdb-dir }}" -ItemType Directory -Force | Out-Null
+          Copy-Item -Path "./.out/bin/netstandard2.0/*.pdb" -Destination "${{ env.pdb-dir }}" -Force -ErrorAction SilentlyContinue
+
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name:           Artifacts
-          path:           ${{ env.artifacts-dir }}/
+          name: Artifacts
+          path: ${{ env.artifacts-dir }}/
           retention-days: 3
 
-      - name: Create Test Coverage Badge
-        uses: simon-k/dotnet-code-coverage-badge@v1.0.0
-        id: create_coverage_badge
-        with:
-          label: Unit Test Coverage
-          color: brightgreen
-          path: test/BeatyBit.Bits.Test/TestResults/coverage.opencover.xml
+      - name: Create & Upload Test Coverage Badge
+        shell: pwsh
+        run: |
+          # Parse the OpenCover XML file to get the coverage percentage
+          $xmlPath = "test/BeatyBit.Bits.Test/TestResults/coverage.opencover.xml"
+          [xml]$xml = Get-Content $xmlPath
+          $coverage = $xml.CoverageSession.Summary.sequenceCoverage
+          $percentage = [math]::Round([decimal]$coverage, 2)
 
-          gist-filename: bits-test-coverage.json
-          gist-id: 21c1ecd6072def6cf2300fe365aa46b9
-          gist-auth-token: ${{ secrets.GIST_KEY }}
+          Write-Host "Code coverage percentage: $percentage%"
 
-      - name: Print code coverage
-        run: echo "Code coverage percentage ${{steps.create_coverage_badge.outputs.percentage}}%"
+          # Determine badge color based on the percentage score
+          $color = "red"
+          if ($percentage -ge 80) { $color = "brightgreen" }
+          elseif ($percentage -ge 60) { $color = "yellow" }
 
-      - name: Print code coverage badge data
-        run: echo "Badge data ${{steps.create_coverage_badge.outputs.badge}}"
+          # Create JSON payload for the Shields.io dynamic badge format
+          $badgeContent = @{
+            schemaVersion = 1
+            label = "Unit Test Coverage"
+            message = "$percentage%"
+            color = $color
+          } | ConvertTo-Json -Compress
+
+          Write-Host "Badge data: $badgeContent"
+
+          # Prepare the Gist API update payload
+          $gistData = @{
+            description = "Updated coverage badge"
+            files = @{
+              "bits-test-coverage.json" = @{
+                content = $badgeContent
+              }
+            }
+          } | ConvertTo-Json -Depth 5
+
+          # Send PATCH request to GitHub Gist API
+          Invoke-RestMethod -Uri "https://api.github.com/gists/21c1ecd6072def6cf2300fe365aa46b9" `
+                            -Method Patch `
+                            -Headers @{
+                              Authorization = "token ${{ secrets.GIST_KEY }}"
+                              Accept = "application/vnd.github.v3+json"
+                            } `
+                            -Body $gistData
