@@ -408,6 +408,7 @@ public class PathBuddyTest
   }
 
   [Test]
+  [Platform("Win")]
   public void RelativePath_Equals_should_be_case_insensitive()
   {
     // --arrange
@@ -419,6 +420,21 @@ public class PathBuddyTest
 
     // --assert
     result.Should().BeTrue();
+  }
+
+  [Test]
+  [Platform("Linux, Unix, MacOsX")]
+  public void RelativePath_Equals_should_be_case_sensitive()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/FILE.txt");
+    var path2 = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeFalse();
   }
 
   [Test]
@@ -437,6 +453,7 @@ public class PathBuddyTest
   }
 
   [Test]
+  [Platform("Win")]
   public void RelativePath_GetHashCode_should_be_case_insensitive()
   {
     // --arrange
@@ -449,6 +466,22 @@ public class PathBuddyTest
 
     // --assert
     hash1.Should().Be(hash2);
+  }
+
+  [Test]
+  [Platform("Linux, Unix, MacOsX")]
+  public void RelativePath_GetHashCode_should_be_case_sensitive()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/FILE.txt");
+    var path2 = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var hash1 = path1.GetHashCode();
+    var hash2 = path2.GetHashCode();
+
+    // --assert
+    hash1.Should().NotBe(hash2);
   }
 
   [Test]
@@ -536,6 +569,7 @@ public class PathBuddyTest
   }
 
   [Test]
+  [Platform("Win")]
   public void AbsolutePath_Equals_should_be_case_insensitive()
   {
     // --arrange
@@ -547,6 +581,21 @@ public class PathBuddyTest
 
     // --assert
     result.Should().BeTrue();
+  }
+
+  [Test]
+  [Platform("Linux, Unix, MacOsX")]
+  public void AbsolutePath_Equals_should_be_case_sensitive()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/FILE.txt"));
+    var path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeFalse();
   }
 
   [Test]
@@ -565,6 +614,7 @@ public class PathBuddyTest
   }
 
   [Test]
+  [Platform("Win")]
   public void AbsolutePath_GetHashCode_should_be_case_insensitive()
   {
     // --arrange
@@ -577,6 +627,22 @@ public class PathBuddyTest
 
     // --assert
     hash1.Should().Be(hash2);
+  }
+
+  [Test]
+  [Platform("Linux, Unix, MacOsX")]
+  public void AbsolutePath_GetHashCode_should_be_case_sensitive()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/FILE.txt"));
+    var path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var hash1 = path1.GetHashCode();
+    var hash2 = path2.GetHashCode();
+
+    // --assert
+    hash1.Should().NotBe(hash2);
   }
 
   [Test]
@@ -847,6 +913,7 @@ public class PathBuddyTest
   }
 
   [Test]
+  [Platform("Win")]
   public void RelativePath_Equals_object_should_be_case_insensitive()
   {
     // --arrange
@@ -861,6 +928,22 @@ public class PathBuddyTest
   }
 
   [Test]
+  [Platform("Linux, Unix, MacOsX")]
+  public void RelativePath_Equals_object_should_be_case_sensitive()
+  {
+    // --arrange
+    var path1 = RelativePath.Parse("some/path/FILE.txt");
+    object path2 = RelativePath.Parse("some/path/file.txt");
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeFalse();
+  }
+
+  [Test]
+  [Platform("Win")]
   public void AbsolutePath_Equals_object_should_be_case_insensitive()
   {
     // --arrange
@@ -872,6 +955,21 @@ public class PathBuddyTest
 
     // --assert
     result.Should().BeTrue();
+  }
+
+  [Test]
+  [Platform("Linux, Unix, MacOsX")]
+  public void AbsolutePath_Equals_object_should_be_case_sensitive()
+  {
+    // --arrange
+    var path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/FILE.txt"));
+    object path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeFalse();
   }
 
   [Test]
@@ -959,6 +1057,7 @@ public class PathBuddyTest
   }
 
   [Test]
+  [Platform("Win")]
   public void PathBase_Equals_object_should_be_case_insensitive()
   {
     // --arrange
@@ -970,5 +1069,20 @@ public class PathBuddyTest
 
     // --assert
     result.Should().BeTrue();
+  }
+
+  [Test]
+  [Platform("Linux, Unix, MacOsX")]
+  public void PathBase_Equals_object_should_be_case_sensitive()
+  {
+    // --arrange
+    PathBase path1 = AbsolutePath.Parse(Path.GetFullPath("some/path/FILE.txt"));
+    object path2 = AbsolutePath.Parse(Path.GetFullPath("some/path/file.txt"));
+
+    // --act
+    var result = path1.Equals(path2);
+
+    // --assert
+    result.Should().BeFalse();
   }
 }
